@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCPDashboard</title>
+    <style>
+        .sidebar {
+            background-color: #efefef;
+            height: 100%;
+            width: 30%;
+            float: left;
+        }
+
+        .main {
+            background-color: #cfef5f;
+            height: 100%;
+            width: 70%;
+            float: right;
+        }
+
+
+
+        .hypDiv:hover,.vm:hover{
+            background-color: white;
+        }
+
+        .hypDiv {
+            background-color: red;
+            margin: 10px;
+        }
+
+        .vm {
+            background-color: blue;
+            margin: 5px;
+            padding: 0px 20px;
+        }
+        .view{
+            margin: auto;
+            margin: 1em;
+            float: left;
+            flex-wrap: wrap;
+        }
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 40%;
+        }
+
+    </style>
+</head>
+<body>
+<div class='application'>
+
+    <div class='sidebar' id='sidebar'></div>
+
+    <div class='main' id="main"></div>
+
+</div>
+
+<script>
+    var data= {
+        "hypervisor": {
+            "hyp1": {
+                "name": "hyp1",
+                "cpu": 12,
+                "os": "CentOS 6",
+                "ram": "24G",
+                "vms": {
+                    "vm1": {
+                        "name": "boy",
+                        "cpu": "2",
+                        "os": "CentOS 6",
+                        "ram": "4G"
+                    },
+                    "vm2": {
+                        "name": "goat",
+                        "cpu": "2",
+                        "os": "Windoze",
+                        "ram": "4G"
+                    }
+
+                }
+
+            },
+            "hyp2": {
+                "name": "hyp2",
+                "cpu": 12,
+                "os": "Ubuntu 16.04",
+                "ram": "24G",
+                "vms": {
+                    "vm1": {
+                        "name": "minnie",
+                        "cpu": "2",
+                        "os": "CentOS 6",
+                        "ram": "4G"
+                    },
+                    "vm2": {
+                        "name": "mickey",
+                        "cpu": "2",
+                        "os": "Windoze",
+                        "ram": "4G"
+                    },
+                    "vm3": {
+                        "name": "donald",
+                        "cpu": "2",
+                        "os": "Solaris",
+                        "ram": "4G"
+                    }
+                }
+            }
+        }
+    };
+
+    sb = document.getElementById('sidebar');
+
+    //data.forEach(loadHypervisor);
+
+    for(var hyp in data.hypervisor){
+        var hypVisor=data.hypervisor[hyp];
+        loadHypervisor(hypVisor);
+    }
+
+
+    function loadHypervisor(hyp) {
+        // create a div for this hypervisor
+        var hy = document.createElement('div');
+        hy.setAttribute('id', hyp.name);
+        hy.setAttribute("onClick","clickedHyp(this)");
+        hy.setAttribute('class', 'hypDiv');
+        hy.innerHTML=hyp.name;
+
+        // add the div to the sidebar
+        sb.appendChild(hy);
+
+        // load the VMs into
+        for (var v in hyp.vms) {
+            var vm=hyp.vms[v];
+            var  vmx = document.createElement('div');
+            vmx.setAttribute('id', vm.name);
+            vmx.setAttribute('class', 'vm');
+
+            vmx.setAttribute("onclick","clickedVm(this)");
+            vmx.innerText = vm.name;
+
+            // add the div to the current hypervisor div
+            hy.appendChild(vmx);
+        }
+
+    }
+
+    function clickedVm(item) {
+        // item will be the HTML DIV that was clicked
+
+        //Suppress bubble on parent.
+        if (!e) var e = window.event;
+        e.cancelBubble = true;
+        if (e.stopPropagation) e.stopPropagation();
+
+        var vms = item.id;
+        
+
+        // scan through the vms, find by name
+        //loop through hypervisor array
+        for (var h in data.hypervisor) {
+            //loop through vm array
+            for(var v in data.hypervisor[h].vms){
+                if(vms==data.hypervisor[h].vms){
+                    var obj= data.hypervisor[h].vms[v];
+                    createVmPreview(obj);
+                }
+            }
+        }
+
+    }
+
+    //create content on right
+    function createVmPreview(divObject) {
+
+        //clear child elements of preview pane
+        var div = document.getElementById('main');
+        while(div.firstChild){
+            div.removeChild(div.firstChild);
+        }
+
+
+        var vmView = document.createElement('div');
+        vmView.setAttribute("id",("view"+divObject.name));
+        document.getElementById("main").appendChild(vmView);
+
+        var vmHeading= document.createElement("h2");
+        var vmMinorHeading= document.createElement("h3");
+        vmHeading.innerText="VM name: "+divObject.name;
+
+        vmMinorHeading.innerText="VM Properties: ";
+
+        var output= document.createTextNode("\n cpu:\t "+divObject.cpu+"\n os:\t "+divObject.os+"\n ram:\t "+divObject.ram);
+        //   var output2=  document.createTextNode(output);
+
+        var viewText=document.createElement("div");
+        viewText.setAttribute("id","viewText");
+
+        //     document.getElementById("view"+divObject.name).appendChild(vmIcon);
+        document.getElementById("view"+divObject.name).appendChild(viewText);
+        document.getElementById("viewText").appendChild(vmHeading);
+        document.getElementById("viewText").appendChild(vmMinorHeading);
+        document.getElementById("viewText").appendChild(output);
+
+
+    }
+
+
+    //When hypervisor Div is clicked
+    function clickedHyp(item) {
+        var hyp = item.id;
+        var div = document.getElementById('main');
+        while(div.firstChild){
+            div.removeChild(div.firstChild);
+        }
+        //loop through hypervisor array
+        for (var h in data) {
+
+            if(hyp==data[h].name){
+                var test=data[h];
+
+                var majorHeading= document.createElement("h2");
+                majorHeading.setAttribute("id", "hypHeading1");
+                majorHeading.innerText="Hypervisor Name: "+data[h].name;
+
+                var minorHeading= document.createElement("h3");
+                minorHeading.setAttribute("id", "hypHeading2");
+                minorHeading.innerText="Hypervisor Properties";
+
+                var headerDiv= document.createElement("div");
+                headerDiv.setAttribute("id","headerDiv");
+
+
+                var text=document.createTextNode("\n cpu:\t "+test.cpu+"\n os:\t "+test.os+"\n ram:\t "+test.ram +" \nVMs:");
+
+                document.getElementById("main").appendChild(majorHeading);
+                document.getElementById("main").appendChild(minorHeading);
+                document.getElementById("main").appendChild(headerDiv);
+                document.getElementById("headerDiv").appendChild(text)
+                //document.getElementById("main").innerHTML+=output;
+
+
+                //loop through vm array
+                for (var v in data[h].vms){
+                    var vmObj= data[h].vms[v];
+                    clickedDivPreview(vmObj);
+                }
+            }
+        }
+    }
+
+    function clickedDivPreview(vmObj) {
+        var vmIcon = document.createElement('img');
+        vmIcon.setAttribute("class","vmImage");
+        vmIcon.setAttribute("src","img/fileExplorer.jpg");
+        vmIcon.setAttribute("id",vmObj.name);
+        vmIcon.setAttribute("onClick","clickedVm(this)");
+
+        var vmView = document.createElement('div');
+        vmView.setAttribute("id",("view"+vmObj.name));
+        vmView.setAttribute("class",("view"));
+        document.getElementById("main").appendChild(vmView);
+
+        var output= document.createTextNode("Name:\t "+vmObj.name+",\n ram:\t "+vmObj.ram);
+        var viewText=document.createElement("div");
+        viewText.setAttribute("id","viewText"+vmObj.name);
+
+        document.getElementById("view"+vmObj.name).appendChild(vmIcon);
+        document.getElementById("view"+vmObj.name).appendChild(viewText);
+        document.getElementById("viewText"+vmObj.name).appendChild(output);
+    }
+
+</script>
+</body>
+
+</html>

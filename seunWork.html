@@ -80,6 +80,9 @@
         }
     ];
 
+
+
+
     sb = document.getElementById('sidebar');
 
     data.forEach(loadHypervisor);
@@ -221,7 +224,7 @@
          function clickedDivPreview(vmObj) {
              var vmIcon = document.createElement('img');
              vmIcon.setAttribute("class","vmImage");
-             vmIcon.setAttribute("src","../img/fileExplorer.jpg");
+             vmIcon.setAttribute("src","img/fileExplorer.jpg");
              vmIcon.setAttribute("id",vmObj.name);
              vmIcon.setAttribute("onClick","clickedVm(this)");
 
