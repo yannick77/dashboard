@@ -5,30 +5,47 @@
     <title>SCPDashboard</title>
     <style>
         .sidebar {
-            background-color: #efefef;
+            background-color: #263238;
             height: 100%;
-            width: 30%;
+            width: 15%;
+            position: fixed;
             float: left;
+            color: #cfd8dc;
+            overflow-x: hidden;
+            z-index: 1;
         }
 
         .main {
             background-color: #cfef5f;
             height: 100%;
-            width: 70%;
+            width: 85%;
+            /*position: static;*/
             float: right;
+
+            /*transition: margin-left;*/
+
+        }
+
+        .main div{
+            padding-left: 3em;
         }
 
         .hypDiv:hover, .vm:hover {
+            background-color: #455a64;
+        }
+
+        .vm:active{
             background-color: white;
         }
 
         .hypDiv {
-            background-color: red;
+            background-color: #455a64;
             margin: 10px;
+            text-align: center;
         }
 
         .vm {
-            background-color: blue;
+            background-color: #37474f;
             margin: 5px;
             padding: 0px 20px;
         }
@@ -50,13 +67,13 @@
     </style>
 </head>
 <body>
-<div class='application'>
+
 
     <div class='sidebar' id='sidebar'></div>
 
     <div class='main' id="main"></div>
 
-</div>
+
 
 <script>
     //data store
@@ -228,12 +245,16 @@
         var headerDiv = document.createElement("div");
         headerDiv.setAttribute("id", "headerDiv");
 
+        var infoDiv = document.createElement("div");
+        infoDiv.setAttribute("id","infoDiv");
+        document.getElementById("main").appendChild(infoDiv);
+
 
         var text = document.createTextNode("\n cpu:\t " + hypervisor.cpu + "\n os:\t " + hypervisor.os + "\n ram:\t " + hypervisor.ram + " \nVMs:");
 
-        document.getElementById("main").appendChild(majorHeading);
-        document.getElementById("main").appendChild(minorHeading);
-        document.getElementById("main").appendChild(headerDiv);
+        document.getElementById("infoDiv").appendChild(majorHeading);
+        document.getElementById("infoDiv").appendChild(minorHeading);
+        document.getElementById("infoDiv").appendChild(headerDiv);
         document.getElementById("headerDiv").appendChild(text)
         //document.getElementById("main").innerHTML+=output;
 
@@ -257,7 +278,7 @@
         var vmView = document.createElement('div');
         vmView.setAttribute("id", ("view" + vmObj.name));
         vmView.setAttribute("class", ("view"));
-        document.getElementById("main").appendChild(vmView);
+        document.getElementById("infoDiv").appendChild(vmView);
 
         var output = document.createTextNode("Name:\t " + vmObj.name + ",\n ram:\t " + vmObj.ram);
         var viewText = document.createElement("div");
